@@ -44,6 +44,8 @@ json_credentials = {
 SHEET_ID = os.getenv('SHEET_ID')
 PROJECT_SHEET_NAME = os.getenv('PROJECT_SHEET_NAME')
 
+print(json_credentials)
+
 # Get projects
 @app.get("/dae/projects")
 async def get_projects():
