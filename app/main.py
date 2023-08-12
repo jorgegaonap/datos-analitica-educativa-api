@@ -41,16 +41,94 @@ json_credentials = {
     "universe_domain": os.getenv('UNIVERSE_DOMAIN'),
 }
 
-SHEET_ID = os.getenv('SHEET_ID')
-PROJECT_SHEET_NAME = os.getenv('PROJECT_SHEET_NAME')
+WORKBOOK_ID = os.getenv('WORKBOOK_ID')
+WORKSHEET_NAME = os.getenv('WORKSHEET_NAME')
 
-print(json_credentials)
+def make_credentials(workbook_id = WORKBOOK_ID, worksheet_name = WORKSHEET_NAME):
+    gc = gspread.service_account_from_dict(json_credentials)
+    sh = gc.open_by_key(workbook_id)
+    worksheet = sh.worksheet(worksheet_name)
+    return worksheet
 
 # Get projects
 @app.get("/dae/projects")
 async def get_projects():
-    gc = gspread.service_account_from_dict(json_credentials)
-    sh = gc.open_by_key(SHEET_ID)
-    worksheet = sh.worksheet(PROJECT_SHEET_NAME)
+    worksheet = make_credentials()
     records = worksheet.get_all_records()
+    # Order by column orden
+    records.sort(key=lambda x: x['orden'])
+
+    # Show only column visible has'n value 'no'
+    records = list(filter(lambda x: x['visible'] != 'no', records))
+
+    # Show only column id has value
+    records = list(filter(lambda x: x['id'], records))
     return records
+
+# Get project by id
+@app.get("/dae/projects/{project_id}")
+async def get_project(project_id: int):
+    worksheet = make_credentials()
+    records = worksheet.get_all_records()
+    for record in records:
+        if record['id'] == project_id:
+            return record
+    return {}
+
+# Get all rows of project by ID_proyecto from worsheet detalle_proyecto filtering by ID_proyecto
+@app.get("/dae/projects/{project_id}/rows")
+async def get_project_rows(project_id: str):
+    worksheet = make_credentials(worksheet_name='detalle_proyecto')
+    records = worksheet.get_all_records()
+    rows = []
+    for record in records:
+        if record['ID_proyecto'] == project_id:
+            # Show only column nivel_texto has value and column visibilidad has'n value 'no'
+            if record['nivel_texto'] and record['visibilidad'] != 'no':
+                rows.append(record)
+                # Order by column orden
+                rows.sort(key=lambda x: x['orden'])
+    
+    html = ''
+    for row in rows:
+        if row['nivel_texto'] == 'H1':
+            html += f"<h1>{row['texto']}</h1>"
+        
+        if row['nivel_texto'] == 'H2':
+            html += f"<h2>{row['texto']}</h2>"
+
+        if row['nivel_texto'] == 'H3':
+            html += f"<h3>{row['texto']}</h3>"
+
+        if row['nivel_texto'] == 'H4':
+            html += f"<h4>{row['texto']}</h4>"
+
+        if row['nivel_texto'] == 'H5':
+            html += f"<h5>{row['texto']}</h5>"
+        
+        if row['nivel_texto'] == 'H6':
+            html += f"<h6>{row['texto']}</h6>"
+
+        if row['nivel_texto'] == 'P':
+            html += f"<p>{row['texto']}</p>"
+
+        if row['nivel_texto'] == 'IMG':
+            html += f"<img src='{row['texto']}' alt='{row['texto']}' />"
+        
+        if row['nivel_texto'] == 'A':
+            html += f"<a href='{row['texto']}' target='_blank'>{row['texto']}</a>"
+
+        if row['nivel_texto'] == 'BR':
+            html += "<br />"
+
+        if row['nivel_texto'] == 'HR':
+            html += "<hr />"
+
+        if row['nivel_texto'] == 'IFRAME_LINK':
+            html += f"<iframe src='{row['texto']}' frameborder='0' allowfullscreen></iframe>"
+
+        if row['nivel_texto'] == 'HTML_RAW':
+            html += f"{row['texto']}"
+
+    return {'html': html}
+        
