@@ -130,5 +130,8 @@ async def get_project_html(project_id: str):
         if row['nivel_texto'] == 'HTML_RAW':
             html += f"{row['texto']}"
 
-    return {'html': html}
+    # Return html in json format
+    return {
+        'html': html
+    }
         
