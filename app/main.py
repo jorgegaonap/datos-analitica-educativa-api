@@ -51,7 +51,7 @@ def make_credentials(workbook_id = WORKBOOK_ID, worksheet_name = WORKSHEET_NAME)
     return worksheet
 
 # Get projects
-@app.get("/dae/projects")
+@app.get("/projects")
 async def get_projects():
     worksheet = make_credentials()
     records = worksheet.get_all_records()
@@ -66,7 +66,7 @@ async def get_projects():
     return records
 
 # Get project by id
-@app.get("/dae/projects/{project_id}")
+@app.get("/projects/{project_id}")
 async def get_project(project_id: int):
     worksheet = make_credentials()
     records = worksheet.get_all_records()
@@ -76,8 +76,8 @@ async def get_project(project_id: int):
     return {}
 
 # Get all rows of project by ID_proyecto from worsheet detalle_proyecto filtering by ID_proyecto
-@app.get("/dae/projects/{project_id}/rows")
-async def get_project_rows(project_id: str):
+@app.get("/project/{project_id}/html")
+async def get_project_html(project_id: str):
     worksheet = make_credentials(worksheet_name='detalle_proyecto')
     records = worksheet.get_all_records()
     rows = []
@@ -92,40 +92,40 @@ async def get_project_rows(project_id: str):
     html = ''
     for row in rows:
         if row['nivel_texto'] == 'H1':
-            html += f"<h1>{row['texto']}</h1>"
+            html += f"<h1 class='text-center mt-0'>{row['texto']}</h1>"
         
         if row['nivel_texto'] == 'H2':
-            html += f"<h2>{row['texto']}</h2>"
+            html += f"<h2 class='text-center mt-0'>{row['texto']}</h2>"
 
         if row['nivel_texto'] == 'H3':
-            html += f"<h3>{row['texto']}</h3>"
+            html += f"<h3 class='text-center mt-0'>{row['texto']}</h3>"
 
         if row['nivel_texto'] == 'H4':
-            html += f"<h4>{row['texto']}</h4>"
+            html += f"<h4 class='text-center mt-0'>{row['texto']}</h4>"
 
         if row['nivel_texto'] == 'H5':
-            html += f"<h5>{row['texto']}</h5>"
+            html += f"<h5 class='text-center mt-0'>{row['texto']}</h5>"
         
         if row['nivel_texto'] == 'H6':
-            html += f"<h6>{row['texto']}</h6>"
+            html += f"<h6 class='text-center mt-0'>{row['texto']}</h6>"
 
         if row['nivel_texto'] == 'P':
             html += f"<p>{row['texto']}</p>"
 
         if row['nivel_texto'] == 'IMG':
-            html += f"<img src='{row['texto']}' alt='{row['texto']}' />"
+            html += f"<img class='img-fluid mx-auto' src='{row['texto']}' alt='{row['texto']}' />"
         
         if row['nivel_texto'] == 'A':
-            html += f"<a href='{row['texto']}' target='_blank'>{row['texto']}</a>"
+            html += f"<a href='{row['texto']}' target='_blank' class='text-center'>{row['texto']}</a>"
 
         if row['nivel_texto'] == 'BR':
             html += "<br />"
 
         if row['nivel_texto'] == 'HR':
-            html += "<hr />"
+            html += "<hr class='divider' />"
 
         if row['nivel_texto'] == 'IFRAME_LINK':
-            html += f"<iframe src='{row['texto']}' frameborder='0' allowfullscreen></iframe>"
+            html += f"<iframe width='100%' height='600px' src='{row['texto']}' frameborder='0' allowfullscreen></iframe>"
 
         if row['nivel_texto'] == 'HTML_RAW':
             html += f"{row['texto']}"
