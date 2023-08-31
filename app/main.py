@@ -55,7 +55,8 @@ def make_credentials(workbook_id = WORKBOOK_ID, worksheet_name = WORKSHEET_NAME)
 async def get_home():
     worksheet = make_credentials(worksheet_name='descripcion_general')
     records = worksheet.get_all_records()
-    return records
+    response = {record['seccion']: record['texto'] for record in records}
+    return response
 
 # Get projects
 @app.get("/projects")
