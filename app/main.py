@@ -50,6 +50,13 @@ def make_credentials(workbook_id = WORKBOOK_ID, worksheet_name = WORKSHEET_NAME)
     worksheet = sh.worksheet(worksheet_name)
     return worksheet
 
+# Get principal data
+@app.get("/home")
+async def get_home():
+    worksheet = make_credentials(worksheet_name='descripcion_general')
+    records = worksheet.get_all_records()
+    return records
+
 # Get projects
 @app.get("/projects")
 async def get_projects():
