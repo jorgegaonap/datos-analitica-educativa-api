@@ -95,18 +95,42 @@ async def get_project_html(project_id: str):
 
         # Case of nivel_texto
         match nivel_texto:
-            case 'H1':
+            case 'H1' | 'H1_CENTRO':
                 html += f"<h1 class='text-center mt-0'>{row['texto']}</h1>"
-            case 'H2':
+            case 'H1_IZQUIERDA':
+                html += f"<h1 class='text-start mt-0'>{row['texto']}</h1>"
+            case 'H1_DERECHA':
+                html += f"<h1 class='text-end mt-0'>{row['texto']}</h1>"
+            case 'H2' | 'H2_CENTRO':
                 html += f"<h2 class='text-center mt-0'>{row['texto']}</h2>"
-            case 'H3':
+            case 'H2_IZQUIERDA':
+                html += f"<h2 class='text-start mt-0'>{row['texto']}</h2>"
+            case 'H2_DERECHA':
+                html += f"<h2 class='text-end mt-0'>{row['texto']}</h2>"
+            case 'H3' | 'H3_CENTRO':
                 html += f"<h3 class='text-center mt-0'>{row['texto']}</h3>"
-            case 'H4':
+            case 'H3_IZQUIERDA':
+                html += f"<h3 class='text-start mt-0'>{row['texto']}</h3>"
+            case 'H3_DERECHA':
+                html += f"<h3 class='text-end mt-0'>{row['texto']}</h3>"
+            case 'H4' | 'H4_CENTRO':
                 html += f"<h4 class='text-center mt-0'>{row['texto']}</h4>"
-            case 'H5':
+            case 'H4_IZQUIERDA':
+                html += f"<h4 class='text-start mt-0'>{row['texto']}</h4>"
+            case 'H4_DERECHA':
+                html += f"<h4 class='text-end mt-0'>{row['texto']}</h4>"
+            case 'H5' | 'H5_CENTRO':
                 html += f"<h5 class='text-center mt-0'>{row['texto']}</h5>"
-            case 'H6':
+            case 'H5_IZQUIERDA':
+                html += f"<h5 class='text-start mt-0'>{row['texto']}</h5>"
+            case 'H5_DERECHA':
+                html += f"<h5 class='text-end mt-0'>{row['texto']}</h5>"
+            case 'H6' | 'H6_CENTRO':
                 html += f"<h6 class='text-center mt-0'>{row['texto']}</h6>"
+            case 'H6_IZQUIERDA':
+                html += f"<h6 class='text-start mt-0'>{row['texto']}</h6>"
+            case 'H6_DERECHA':
+                html += f"<h6 class='text-end mt-0'>{row['texto']}</h6>"
             case 'P':
                 html += f"<p>{row['texto']}</p>"
             case 'IMG':
