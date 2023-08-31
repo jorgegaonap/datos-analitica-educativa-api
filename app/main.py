@@ -142,9 +142,9 @@ async def get_project_html(project_id: str):
             case 'HR':
                 html += "<hr class='divider' />"
             case 'IFRAME_LINK':
-                html += f"<iframe width='100%' height='600px' class='text-center' src='{row['texto']}' frameborder='0' allowfullscreen></iframe>"
+                html += f"<iframe width='100%' height='600px' class='text-center my-3' src='{row['texto']}' frameborder='0' allowfullscreen></iframe>"
             case 'HTML_RAW':
-                html += f"{row['texto']}"
+                html += f"<span class='my-3'>{row['texto']}</span>"
             case _:
                 html += f"<p>{row['texto']}</p>"
     
