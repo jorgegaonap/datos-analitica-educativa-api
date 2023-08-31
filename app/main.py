@@ -92,44 +92,80 @@ async def get_project_html(project_id: str):
     html = ''
     for row in rows:
         nivel_texto = row['nivel_texto'].strip().upper()
-        if nivel_texto == 'H1':
-            html += f"<h1 class='text-center mt-0'>{row['texto']}</h1>"
+
+        # Case of nivel_texto
+        match nivel_texto:
+            case 'H1':
+                html += f"<h1 class='text-center mt-0'>{row['texto']}</h1>"
+            case 'H2':
+                html += f"<h2 class='text-center mt-0'>{row['texto']}</h2>"
+            case 'H3':
+                html += f"<h3 class='text-center mt-0'>{row['texto']}</h3>"
+            case 'H4':
+                html += f"<h4 class='text-center mt-0'>{row['texto']}</h4>"
+            case 'H5':
+                html += f"<h5 class='text-center mt-0'>{row['texto']}</h5>"
+            case 'H6':
+                html += f"<h6 class='text-center mt-0'>{row['texto']}</h6>"
+            case 'P':
+                html += f"<p>{row['texto']}</p>"
+            case 'IMG':
+                html += f"<img class='img-fluid mx-auto' src='{row['texto']}' alt='{row['texto']}' />"
+            case 'A':
+                html += f"<a href='{row['texto']}' target='_blank' class='text-center'>{row['texto']}</a>"
+            case 'BR':
+                html += "<br />"
+            case 'HR':
+                html += "<hr class='divider' />"
+            case 'IFRAME_LINK':
+                html += f"<iframe width='100%' height='600px' class='text-center' src='{row['texto']}' frameborder='0' allowfullscreen></iframe>"
+            case 'HTML_RAW':
+                html += f"{row['texto']}"
+            case _:
+                html += f"<p>{row['texto']}</p>"
+    
+
+
+
+        # If of nivel_texto
+        # if nivel_texto == 'H1':
+        #     html += f"<h1 class='text-center mt-0'>{row['texto']}</h1>"
         
-        if nivel_texto == 'H2':
-            html += f"<h2 class='text-center mt-0'>{row['texto']}</h2>"
+        # if nivel_texto == 'H2':
+        #     html += f"<h2 class='text-center mt-0'>{row['texto']}</h2>"
 
-        if nivel_texto == 'H3':
-            html += f"<h3 class='text-center mt-0'>{row['texto']}</h3>"
+        # if nivel_texto == 'H3':
+        #     html += f"<h3 class='text-center mt-0'>{row['texto']}</h3>"
 
-        if nivel_texto == 'H4':
-            html += f"<h4 class='text-center mt-0'>{row['texto']}</h4>"
+        # if nivel_texto == 'H4':
+        #     html += f"<h4 class='text-center mt-0'>{row['texto']}</h4>"
 
-        if nivel_texto == 'H5':
-            html += f"<h5 class='text-center mt-0'>{row['texto']}</h5>"
+        # if nivel_texto == 'H5':
+        #     html += f"<h5 class='text-center mt-0'>{row['texto']}</h5>"
         
-        if nivel_texto == 'H6':
-            html += f"<h6 class='text-center mt-0'>{row['texto']}</h6>"
+        # if nivel_texto == 'H6':
+        #     html += f"<h6 class='text-center mt-0'>{row['texto']}</h6>"
 
-        if nivel_texto == 'P':
-            html += f"<p>{row['texto']}</p>"
+        # if nivel_texto == 'P':
+        #     html += f"<p>{row['texto']}</p>"
 
-        if nivel_texto == 'IMG':
-            html += f"<img class='img-fluid mx-auto' src='{row['texto']}' alt='{row['texto']}' />"
+        # if nivel_texto == 'IMG':
+        #     html += f"<img class='img-fluid mx-auto' src='{row['texto']}' alt='{row['texto']}' />"
         
-        if nivel_texto == 'A':
-            html += f"<a href='{row['texto']}' target='_blank' class='text-center'>{row['texto']}</a>"
+        # if nivel_texto == 'A':
+        #     html += f"<a href='{row['texto']}' target='_blank' class='text-center'>{row['texto']}</a>"
 
-        if nivel_texto == 'BR':
-            html += "<br />"
+        # if nivel_texto == 'BR':
+        #     html += "<br />"
 
-        if nivel_texto == 'HR':
-            html += "<hr class='divider' />"
+        # if nivel_texto == 'HR':
+        #     html += "<hr class='divider' />"
 
-        if nivel_texto == 'IFRAME_LINK':
-            html += f"<iframe width='100%' height='600px' class='text-center' src='{row['texto']}' frameborder='0' allowfullscreen></iframe>"
+        # if nivel_texto == 'IFRAME_LINK':
+        #     html += f"<iframe width='100%' height='600px' class='text-center' src='{row['texto']}' frameborder='0' allowfullscreen></iframe>"
 
-        if nivel_texto == 'HTML_RAW':
-            html += f"{row['texto']}"
+        # if nivel_texto == 'HTML_RAW':
+        #     html += f"{row['texto']}"
 
     return {'html': html}
         
