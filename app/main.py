@@ -1,9 +1,11 @@
+"""FastAPI application for serving educational analytics data from Google Sheets."""
+
+import os
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
-
 import gspread
-import os
 
 # Create FastAPI instance
 app = FastAPI(title='Datos Analitica Eductiva API')
@@ -45,6 +47,15 @@ WORKBOOK_ID = os.getenv('WORKBOOK_ID')
 WORKSHEET_NAME = os.getenv('WORKSHEET_NAME')
 
 def make_credentials(workbook_id = WORKBOOK_ID, worksheet_name = WORKSHEET_NAME):
+    """Create and return a Google Sheets worksheet connection.
+    
+    Args:
+        workbook_id: ID of the Google Sheets workbook
+        worksheet_name: Name of the worksheet to access
+        
+    Returns:
+        A Google Sheets worksheet object
+    """
     gc = gspread.service_account_from_dict(json_credentials)
     sh = gc.open_by_key(workbook_id)
     worksheet = sh.worksheet(worksheet_name)
@@ -53,6 +64,11 @@ def make_credentials(workbook_id = WORKBOOK_ID, worksheet_name = WORKSHEET_NAME)
 # Get principal data
 @app.get("/home")
 async def get_home():
+    """Get general description data from the home worksheet.
+    
+    Returns:
+        dict: A dictionary mapping section names to their text content
+    """
     worksheet = make_credentials(worksheet_name='descripcion_general')
     records = worksheet.get_all_records()
     response = {record['seccion']: record['texto'] for record in records}
@@ -61,6 +77,11 @@ async def get_home():
 # Get projects
 @app.get("/projects")
 async def get_projects():
+    """Get all visible projects sorted by order.
+    
+    Returns:
+        list: A list of project records, filtered to show only visible projects with IDs
+    """
     worksheet = make_credentials()
     records = worksheet.get_all_records()
     # Order by column orden
@@ -76,6 +97,14 @@ async def get_projects():
 # Get project by id
 @app.get("/projects/{project_id}")
 async def get_project(project_id: int):
+    """Get a specific project by its ID.
+    
+    Args:
+        project_id (int): The ID of the project to retrieve
+        
+    Returns:
+        dict: Project record if found, empty dict if not found
+    """
     worksheet = make_credentials()
     records = worksheet.get_all_records()
     for record in records:
@@ -86,6 +115,14 @@ async def get_project(project_id: int):
 # Get all rows of project by ID_proyecto from worsheet detalle_proyecto filtering by ID_proyecto
 @app.get("/project/{project_id}/html")
 async def get_project_html(project_id: str):
+    """Get HTML content for a specific project.
+    
+    Args:
+        project_id (str): The ID of the project to get HTML content for
+        
+    Returns:
+        dict: Dictionary containing the generated HTML content for the project
+    """
     worksheet = make_credentials(worksheet_name='detalle_proyecto')
     records = worksheet.get_all_records()
     rows = []
@@ -96,7 +133,7 @@ async def get_project_html(project_id: str):
                 rows.append(record)
                 # Order by column orden
                 rows.sort(key=lambda x: x['orden'])
-    
+
     html = ''
     for row in rows:
         nivel_texto = row['nivel_texto'].strip().upper()
@@ -155,49 +192,6 @@ async def get_project_html(project_id: str):
                 html += f"<span class='my-3'>{row['texto']}</span>"
             case _:
                 html += f"<p>{row['texto']}</p>"
-    
 
-
-
-        # If of nivel_texto
-        # if nivel_texto == 'H1':
-        #     html += f"<h1 class='text-center mt-0'>{row['texto']}</h1>"
-        
-        # if nivel_texto == 'H2':
-        #     html += f"<h2 class='text-center mt-0'>{row['texto']}</h2>"
-
-        # if nivel_texto == 'H3':
-        #     html += f"<h3 class='text-center mt-0'>{row['texto']}</h3>"
-
-        # if nivel_texto == 'H4':
-        #     html += f"<h4 class='text-center mt-0'>{row['texto']}</h4>"
-
-        # if nivel_texto == 'H5':
-        #     html += f"<h5 class='text-center mt-0'>{row['texto']}</h5>"
-        
-        # if nivel_texto == 'H6':
-        #     html += f"<h6 class='text-center mt-0'>{row['texto']}</h6>"
-
-        # if nivel_texto == 'P':
-        #     html += f"<p>{row['texto']}</p>"
-
-        # if nivel_texto == 'IMG':
-        #     html += f"<img class='img-fluid mx-auto' src='{row['texto']}' alt='{row['texto']}' />"
-        
-        # if nivel_texto == 'A':
-        #     html += f"<a href='{row['texto']}' target='_blank' class='text-center'>{row['texto']}</a>"
-
-        # if nivel_texto == 'BR':
-        #     html += "<br />"
-
-        # if nivel_texto == 'HR':
-        #     html += "<hr class='divider' />"
-
-        # if nivel_texto == 'IFRAME_LINK':
-        #     html += f"<iframe width='100%' height='600px' class='text-center' src='{row['texto']}' frameborder='0' allowfullscreen></iframe>"
-
-        # if nivel_texto == 'HTML_RAW':
-        #     html += f"{row['texto']}"
 
     return {'html': html}
-        
