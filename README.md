@@ -3,5 +3,8 @@
 
 
 ## Run server
-```uvicorn app.main:app --reload```
+```
+# uvicorn app.main:app --reload
+fastapi dev ./app/main.py
+```
 
