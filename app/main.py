@@ -198,97 +198,7 @@ async def get_project_html(project_id: str):
                 # Order by column orden
                 rows.sort(key=lambda x: x['orden'])
 
-    # CSS styles para el contenido
-    css_styles = """
-    <style>
-        /* Estilos generales */
-        body {
-            font-family: 'Merriweather', 'Helvetica Neue', Arial, sans-serif;
-            color: #565656;
-            line-height: 1.6;
-        }
-        
-        /* Títulos */
-        h1, h2, h3, h4, h5, h6 {
-            font-family: 'Merriweather Sans', 'Helvetica Neue', Arial, sans-serif;
-            font-weight: 700;
-            margin-top: 1.5rem;
-            margin-bottom: 1rem;
-            color: #333;
-        }
-        
-        h1 { font-size: 2.5rem; }
-        h2 { font-size: 2rem; }
-        h3 { font-size: 1.75rem; }
-        h4 { font-size: 1.5rem; }
-        h5 { font-size: 1.25rem; }
-        h6 { font-size: 1rem; }
-        
-        /* Párrafos */
-        p {
-            margin-bottom: 1rem;
-            font-size: 1rem;
-        }
-        
-        /* Enlaces */
-        a {
-            color: #f4623a;
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-        
-        a:hover {
-            color: #d14521;
-            text-decoration: underline;
-        }
-        
-        /* Imágenes */
-        img {
-            max-width: 100%;
-            height: auto;
-            display: block;
-            margin: 1.5rem auto;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        
-        /* Líneas divisoras */
-        hr {
-            margin: 2rem 0;
-            border: 0;
-            border-top: 3px solid #f4623a;
-            opacity: 0.3;
-        }
-        
-        /* iframes */
-        iframe {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            margin: 1.5rem 0;
-        }
-        
-        /* Utilidades de texto */
-        .text-center { text-align: center; }
-        .text-start { text-align: left; }
-        .text-end { text-align: right; }
-        
-        /* Márgenes */
-        .mt-0 { margin-top: 0; }
-        .my-3 { margin-top: 1rem; margin-bottom: 1rem; }
-        .mx-auto { margin-left: auto; margin-right: auto; }
-        
-        /* Responsive */
-        @media (max-width: 768px) {
-            h1 { font-size: 2rem; }
-            h2 { font-size: 1.75rem; }
-            h3 { font-size: 1.5rem; }
-            iframe { height: 400px !important; }
-        }
-    </style>
-    """
-
-    html = css_styles
+    html = ""
     for row in rows:
         nivel_texto = row['nivel_texto'].strip().upper()
 
@@ -343,10 +253,7 @@ async def get_project_html(project_id: str):
             case 'IFRAME_LINK':
                 html += f"<iframe width='100%' height='600px' class='text-center my-3' src='{row['texto']}' frameborder='0' allowfullscreen></iframe>"
             case 'HTML_RAW':
-                html += f"<span class='my-3'>{row['texto']}</span>"
-            case 'CSS':
-                # Permite agregar CSS personalizado desde Google Sheets
-                html += f"<style>{row['texto']}</style>"
+                html += f"{row['texto']}"
             case _:
                 html += f"<p>{row['texto']}</p>"
 
