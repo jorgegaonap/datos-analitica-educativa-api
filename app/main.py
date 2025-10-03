@@ -121,14 +121,60 @@ async def get_project_by_slug(slug: str):
         slug (str): The slug of the project to retrieve
         
     Returns:
-        dict: Project record if found, empty dict if not found
+        dict: Project record if found, empty dict with error message if not found
     """
     worksheet = make_credentials()
     records = worksheet.get_all_records()
+    
+    # Buscar por slug (case insensitive para mayor flexibilidad)
     for record in records:
-        if record.get('slug') == slug:
+        if record.get('slug', '').lower() == slug.lower():
+            # Asegurarse de que el registro tenga un ID
+            if not record.get('id'):
+                return {"error": "Project found but has no ID", "slug": slug}
             return record
-    return {}
+    
+    # Si no se encuentra por slug, intentar buscar si el slug es en realidad un ID
+    try:
+        project_id = int(slug)
+        for record in records:
+            if record.get('id') == project_id:
+                return record
+    except ValueError:
+        pass  # El slug no es un número, continuar
+    
+    # No se encontró el proyecto
+    return {
+        "error": "Project not found",
+        "slug": slug,
+        "message": f"No project found with slug '{slug}'. Check that the slug exists in Google Sheets."
+    }
+
+# Debug endpoint: Get all available slugs
+@app.get("/projects/slugs")
+async def get_all_slugs():
+    """Get all available slugs from projects.
+    
+    Returns:
+        list: List of dictionaries with id, proyecto, and slug
+    """
+    worksheet = make_credentials()
+    records = worksheet.get_all_records()
+    
+    slugs_info = []
+    for record in records:
+        if record.get('id'):  # Solo proyectos con ID
+            slugs_info.append({
+                'id': record.get('id'),
+                'proyecto': record.get('proyecto', 'Sin nombre'),
+                'slug': record.get('slug', ''),
+                'has_slug': bool(record.get('slug', '').strip())
+            })
+    
+    return {
+        'total': len(slugs_info),
+        'projects': slugs_info
+    }
 
 # Get all rows of project by ID_proyecto from worsheet detalle_proyecto filtering by ID_proyecto
 @app.get("/project/{project_id}/html")
