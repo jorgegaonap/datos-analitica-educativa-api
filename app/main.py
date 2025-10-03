@@ -112,6 +112,24 @@ async def get_project(project_id: int):
             return record
     return {}
 
+# Get project by slug
+@app.get("/projects/slug/{slug}")
+async def get_project_by_slug(slug: str):
+    """Get a specific project by its slug.
+    
+    Args:
+        slug (str): The slug of the project to retrieve
+        
+    Returns:
+        dict: Project record if found, empty dict if not found
+    """
+    worksheet = make_credentials()
+    records = worksheet.get_all_records()
+    for record in records:
+        if record.get('slug') == slug:
+            return record
+    return {}
+
 # Get all rows of project by ID_proyecto from worsheet detalle_proyecto filtering by ID_proyecto
 @app.get("/project/{project_id}/html")
 async def get_project_html(project_id: str):
